@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Ciao Batuffolo</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'hot-fuchsia': '#ff0a54',
+            'wild-strawberry': '#ff477e',
+            'bubblegum-pink': '#ff5c8a',
+            'petal-rouge': '#ff7096',
+            'bubblegum-tint': '#ff85a1',
+            'cotton-candy': '#ff99ac',
+            'cherry-blossom': '#fbb1bd',
+            'pastel-pink': '#f9bec7',
+            'cotton-rose': '#f7cad0',
+            'soft-blush': '#fae0e4'
+          },
+          fontFamily: {
+            vibes: ['"Great Vibes"', 'cursive'],
+            quicksand: ['"Quicksand"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --hot-fuchsia: #ff0a54;
+      --wild-strawberry: #ff477e;
+      --bubblegum-pink: #ff5c8a;
+      --petal-rouge: #ff7096;
+      --bubblegum-tint: #ff85a1;
+      --cotton-candy: #ff99ac;
+      --cherry-blossom: #fbb1bd;
+      --pastel-pink: #f9bec7;
+      --cotton-rose: #f7cad0;
+      --soft-blush: #fae0e4;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Quicksand', sans-serif;
+      overscroll-behavior-y: none;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, var(--soft-blush), var(--cotton-rose), var(--pastel-pink), var(--soft-blush));
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      color: #4a4a4a;
+      touch-action: pan-y;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 8px 32px rgba(255, 92, 138, 0.1);
+    }
+    
+    .glass-btn {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s;
+    }
+    
+    .glass-btn:active {
+      transform: scale(0.96);
+      background: rgba(255, 255, 255, 0.6);
+    }
+
+    .modal-overlay {
+      background: rgba(250, 224, 228, 0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 50;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .squishy-area {
+      touch-action: none; /* Previene lo scroll durante il drag */
+      perspective: 1000px;
+    }
+
+    .squishy-element {
+      cursor: grab;
+      position: relative;
+      margin: 0 auto;
+      transform-origin: center center;
+      /* Transizione JS (requestAnimationFrame) */
+      will-change: transform; 
+    }
+    
+    .squishy-element.dragging {
+      cursor: grabbing;
+    }
+
+    .type-soap {
+      width: 220px;
+      height: 150px;
+      background: radial-gradient(circle at 35% 35%, #ffffff 0%, #fdf5f6 60%, #f7cad0 100%);
+      border-radius: 55% 45% 60% 40% / 45% 55% 40% 60%;
+      box-shadow: 
+        inset 15px 15px 30px rgba(255,255,255,0.9),
+        inset -15px -15px 25px rgba(255, 71, 126, 0.15),
+        0 25px 45px rgba(255, 71, 126, 0.2);
+    }
+
+    .type-cheese {
+      width: 180px;
+      height: 180px;
+      background-color: #fdefa6; 
+      /* Buchi del formaggio */
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 16px, rgba(255,255,255,0.8) 18px, transparent 20px),
+        radial-gradient(circle at 75% 35%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 12px, rgba(255,255,255,0.8) 14px, transparent 15px),
+        radial-gradient(circle at 40% 75%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 22px, rgba(255,255,255,0.8) 25px, transparent 27px),
+        radial-gradient(circle at 80% 80%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 10px, rgba(255,255,255,0.8) 11px, transparent 12px),
+        radial-gradient(circle at 10% 60%, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 8px, rgba(255,255,255,0.8) 9px, transparent 10px);
+      border-radius: 28px;
+      box-shadow: 
+        inset -15px -15px 30px rgba(216,192,50,0.3), 
+        inset 15px 15px 30px rgba(255,255,255,0.8), 
+        0 25px 45px rgba(255, 71, 126, 0.15);
+    }
+
+    .orb-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300px;
+    }
+    
+    .orb {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--cotton-rose) 0%, var(--hot-fuchsia) 100%);
+      transition: transform 4s linear, background 4s ease;
+      box-shadow: 0 0 40px var(--bubblegum-pink);
+    }
+
+    .polaroid {
+      background: #fafafa;
+      padding: 12px 12px 40px 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 4px;
+      margin-bottom: 24px;
+      transform: rotate(-2deg);
+      transition: transform 0.3s;
+    }
+    .polaroid:nth-child(even) {
+      transform: rotate(2deg);
+    }
+    .polaroid img {
+      width: 100%;
+      height: auto;
+      max-height: 350px;
+      object-fit: contain;
+      background-color: var(--soft-blush);
+      border-radius: 4px;
+      filter: contrast(0.95) sepia(0.1);
+    }
+    .polaroid-text {
+      text-align: center;
+      margin-top: 12px;
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.5rem;
+      color: #555;
+    }
+    
+    .safe-pb { padding-bottom: max(env(safe-area-inset-bottom), 1.5rem); }
+    .safe-pt { padding-top: max(env(safe-area-inset-top), 1.5rem); }
+  </style>
+</head>
+
+<body class="min-h-screen flex flex-col justify-between relative overflow-hidden">
+  
+  <main class="flex-1 flex flex-col px-6 safe-pt w-full max-w-md mx-auto z-10">
+    
+    <!-- Intestazione -->
+    <div class="text-center mt-12">
+      <h1 class="font-vibes text-6xl text-hot-fuchsia tracking-wide drop-shadow-sm">Ciao Batuffolo</h1>
+      <p class="font-quicksand font-semibold text-wild-strawberry uppercase tracking-widest text-xs mt-3 opacity-90">
+        sono sempre qui con te
+      </p>
+    </div>
+
+    <!-- Pulsanti Menu -->
+    <div class="flex flex-col gap-5 w-full mt-28">
+      
+      <!-- Respiro -->
+      <button onclick="openModal('modal-breathing'); startBreathing();" class="glass glass-btn w-full p-4 rounded-3xl flex items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center text-2xl shadow-inner text-hot-fuchsia">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div class="text-left">
+          <h2 class="text-lg font-bold text-slate-700">Respiriamo insieme</h2>
+          <p class="text-xs text-slate-500 font-medium">Starai subito meglio</p>
+        </div>
+      </button>
+
+      <!-- Ricordi -->
+      <button onclick="openModal('modal-memories')" class="glass glass-btn w-full p-4 rounded-3xl flex items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center text-2xl shadow-inner text-wild-strawberry">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        </div>
+        <div class="text-left">
+          <h2 class="text-lg font-bold text-slate-700">Fotine Bellissime</h2>
+          <p class="text-xs text-slate-500 font-medium">Che fortuna averti</p>
+        </div>
+      </button>
+
+      <!-- Squishy -->
+      <button onclick="openModal('modal-squishy'); initSquishy();" class="glass glass-btn w-full p-4 rounded-3xl flex items-center gap-4">
+        <div class="w-14 h-14 rounded-full bg-white/70 flex items-center justify-center text-2xl shadow-inner text-bubblegum-pink">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </div>
+        <div class="text-left">
+          <h2 class="text-lg font-bold text-slate-700">Squishyyy</h2>
+          <p class="text-xs text-slate-500 font-medium">Dato che li adoriii</p>
+        </div>
+      </button>
+
+    </div>
+  </main>
+
+  <footer class="w-full px-6 safe-pb pt-4 pb-8 z-10 flex justify-center">
+    <a href="tel:3317429027" style="background-color: var(--hot-fuchsia);" class="text-white w-full max-w-sm py-4 rounded-full text-center shadow-[0_8px_20px_rgba(255,10,84,0.4)] active:scale-95 transition-transform flex items-center justify-center gap-2 font-bold text-lg">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+      Per te Amore mio
+    </a>
+  </footer>
+
+  <div id="modal-breathing" class="modal-overlay fixed inset-0 flex flex-col justify-between p-6 safe-pt safe-pb">
+    <div class="flex justify-end mt-4">
+      <button onclick="closeModal('modal-breathing')" class="w-10 h-10 glass rounded-full flex items-center justify-center text-slate-500 active:scale-90 transition-transform">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    
+    <div class="flex-1 flex flex-col items-center justify-center mt-[-10vh]">
+      <h2 class="text-3xl font-bold text-hot-fuchsia mb-2">Respira con me</h2>
+      <p class="text-slate-600 mb-12 text-center px-4">Segui il cerchio.<br>Non pensare a nulla.</p>
+      
+      <div class="orb-container">
+        <div id="breathing-orb" class="orb"></div>
+      </div>
+      
+      <p id="breathing-text" class="text-2xl font-bold text-wild-strawberry mt-12 transition-opacity duration-500">Inspira...</p>
+    </div>
+  </div>
+
+  <div id="modal-memories" class="modal-overlay fixed inset-0 flex flex-col p-6 safe-pt safe-pb">
+    <div class="flex justify-between items-center mt-4 mb-6 sticky top-0 z-20">
+      <h2 class="text-3xl font-bold text-hot-fuchsia">Fotine Bellissime</h2>
+      <button onclick="closeModal('modal-memories')" class="w-10 h-10 glass rounded-full flex items-center justify-center text-slate-500 active:scale-90 transition-transform">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    
+    <div class="flex-1 overflow-y-auto pb-10 px-2 scroll-smooth">
+
+      <!-- Foto 1 -->
+      <div class="polaroid">
+        <img src="foto1.jpeg" alt="Ricordo 1" loading="lazy">
+        <div class="polaroid-text">BACIONE GIGANTEEEE</div>
+      </div>
+
+      <!-- Foto 2 -->
+      <div class="polaroid">
+        <img src="foto2.jpg" alt="Ricordo 2" loading="lazy">
+        <div class="polaroid-text">Jellyfishhhh</div>
+      </div>
+      
+      <!-- Foto 3 -->
+      <div class="polaroid">
+        <img src="foto3.jpeg" alt="Ricordo 3" loading="lazy">
+        <div class="polaroid-text">Ti amo batuffolo</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="modal-squishy" class="modal-overlay fixed inset-0 flex flex-col justify-between p-6 safe-pt safe-pb">
+    <div class="flex justify-end mt-4">
+      <button onclick="closeModal('modal-squishy')" class="w-10 h-10 glass rounded-full flex items-center justify-center text-slate-500 active:scale-90 transition-transform z-20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    
+    <div class="flex-1 flex flex-col items-center justify-center mt-[-10vh] squishy-area">
+      <h2 class="text-3xl font-bold text-hot-fuchsia mb-2">Squishyyyyy</h2>
+      <p class="text-slate-600 mb-16 text-center">Puoi giocarci quanto vuoi adesso</p>
+      
+      <!-- Squishy -->
+      <div id="squishy" class="squishy-element type-soap"></div>
+    </div>
+
+    <!-- Switch Soap / Cheese -->
+    <div class="glass rounded-full p-2 flex mb-8 mx-auto w-3/4 max-w-[250px] relative">
+      <div id="squishy-indicator" class="absolute h-full top-0 left-0 w-1/2 bg-white/70 rounded-full shadow-sm transition-transform duration-300 transform translate-x-0"></div>
+      <button onclick="setSquishyType('soap')" class="flex-1 py-3 text-center text-sm font-bold text-hot-fuchsia z-10 relative">Soap</button>
+      <button onclick="setSquishyType('cheese')" class="flex-1 py-3 text-center text-sm font-bold text-hot-fuchsia z-10 relative">Cheese</button>
+    </div>
+  </div>
+
+  <script>
+    // Gestione Modali 
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+      if(id === 'modal-breathing') stopBreathing();
+    }
+
+    // Respirazione (4-4-4-4) 
+    let breathInterval;
+    function startBreathing() {
+      const orb = document.getElementById('breathing-orb');
+      const text = document.getElementById('breathing-text');
+      let state = 0; // 0: Inspira, 1: Trattieni, 2: Espira, 3: Brava
+      
+      const cycle = () => {
+        if (state === 0) {
+          text.innerText = "Inspira...";
+          orb.style.transform = "scale(1.8)";
+          orb.style.background = "radial-gradient(circle, var(--cotton-rose) 0%, var(--hot-fuchsia) 100%)";
+          state = 1;
+        } else if (state === 1) {
+          text.innerText = "Trattieni...";
+          // orb mantiene la dimensione
+          state = 2;
+        } else if (state === 2) {
+          text.innerText = "Espira dolcemente...";
+          orb.style.transform = "scale(1)";
+          orb.style.background = "radial-gradient(circle, var(--pastel-pink) 0%, var(--cotton-candy) 100%)";
+          state = 3;
+        } else {
+          text.innerText = "Bravissima Amore ❤️";
+          // orb resta piccolo prima del nuovo ciclo
+          state = 0;
+        }
+      };
+      
+      cycle(); // Inizia subito
+      breathInterval = setInterval(cycle, 4000); // Cambia ogni 4 secondi
+    }
+
+    function stopBreathing() {
+      clearInterval(breathInterval);
+      const orb = document.getElementById('breathing-orb');
+      orb.style.transform = "scale(1)";
+    }
+
+    // Squishy Physics
+    const squishyEl = document.getElementById('squishy');
+    
+    // Variabili Fisiche della Molla
+    let s_currentX = 0, s_currentY = 0; // Posizione attuale
+    let s_targetX = 0, s_targetY = 0;   // Posizione target (dito o 0,0)
+    let s_velX = 0, s_velY = 0;         // Velocità
+    
+    // Costanti della molla (modificabili per feeling diverso)
+    const TENSION = 0.12;   // Forza di richiamo verso il centro
+    const FRICTION = 0.78;  // Frizione (più basso = si ferma prima, più alto = rimbalza di più)
+    
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let dragOffsetX = 0, dragOffsetY = 0;
+    let animationFrameId;
+
+    function initSquishy() {
+      if(!animationFrameId) {
+        animateSquishy();
+      }
+    }
+
+    // Loop di animazione per la fisica
+    function animateSquishy() {
+      // Calcolo forza elastica
+      const ax = (s_targetX - s_currentX) * TENSION;
+      const ay = (s_targetY - s_currentY) * TENSION;
+      
+      // Aggiornamento velocità con frizione
+      s_velX = (s_velX + ax) * FRICTION;
+      s_velY = (s_velY + ay) * FRICTION;
+      
+      // Aggiornamento posizione
+      s_currentX += s_velX;
+      s_currentY += s_velY;
+
+      // Calcolo deformazione (stretch & squash) basata sulla distanza
+      // Più viene tirato, più si allunga in quella direzione e si stringe nell'altra
+      let scaleX = 1 + Math.abs(s_currentX) / 300 - Math.abs(s_currentY) / 500;
+      let scaleY = 1 + Math.abs(s_currentY) / 300 - Math.abs(s_currentX) / 500;
+      
+      // Limiti per evitare che si schiacci troppo o si inverta
+      scaleX = Math.max(0.6, Math.min(scaleX, 1.4));
+      scaleY = Math.max(0.6, Math.min(scaleY, 1.4));
+
+      // Trasformazione CSS
+      squishyEl.style.transform = `translate(${s_currentX}px, ${s_currentY}px) scale(${scaleX}, ${scaleY})`;
+      
+      animationFrameId = requestAnimationFrame(animateSquishy);
+    }
+
+    // Gestione Eventi Touch & Mouse per lo Squishy
+    function handleDragStart(e) {
+      isDragging = true;
+      squishyEl.classList.add('dragging');
+      // Ferma la velocità quando si afferra
+      s_velX = 0; 
+      s_velY = 0;
+      
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      
+      startX = clientX;
+      startY = clientY;
+      
+      // Salva l'offset corrente per evitare salti
+      dragOffsetX = s_currentX;
+      dragOffsetY = s_currentY;
+    }
+
+    function handleDragMove(e) {
+      if (!isDragging) return;
+      e.preventDefault(); // Previene lo scroll della pagina
+      
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      
+      const deltaX = clientX - startX;
+      const deltaY = clientY - startY;
+      
+      // Imposta il nuovo target basato sul movimento (con un limite massimo per non farlo uscire dallo schermo)
+      s_targetX = Math.max(-150, Math.min(150, dragOffsetX + deltaX));
+      s_targetY = Math.max(-200, Math.min(200, dragOffsetY + deltaY));
+    }
+
+    function handleDragEnd() {
+      isDragging = false;
+      squishyEl.classList.remove('dragging');
+      // Al rilascio, il target torna al centro (0,0) attivando il rimbalzo
+      s_targetX = 0;
+      s_targetY = 0;
+    }
+
+    // Aggiunta Listeners Mouse
+    squishyEl.addEventListener('mousedown', handleDragStart);
+    window.addEventListener('mousemove', handleDragMove);
+    window.addEventListener('mouseup', handleDragEnd);
+
+    // Aggiunta Listeners Touch (Mobile)
+    squishyEl.addEventListener('touchstart', handleDragStart, {passive: false});
+    window.addEventListener('touchmove', handleDragMove, {passive: false});
+    window.addEventListener('touchend', handleDragEnd);
+
+    // Switch Tipo Squishy 
+    function setSquishyType(type) {
+      const indicator = document.getElementById('squishy-indicator');
+      if (type === 'soap') {
+        indicator.style.transform = 'translateX(0%)';
+        squishyEl.className = 'squishy-element type-soap';
+      } else {
+        indicator.style.transform = 'translateX(100%)';
+        squishyEl.className = 'squishy-element type-cheese';
+      }
+      // Colpetto per mostrare l'elasticità quando si cambia
+      s_velY = -15; 
+    }
+  </script>
+</body>
+</html>
