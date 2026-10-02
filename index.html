@@ -391,6 +391,7 @@
     // Squishy Physics
     const squishyEl = document.getElementById('squishy');
     
+    // Squishy Sound
     const crunchAudio = new Audio('crunch_sound.mp3');
     crunchAudio.preload = 'auto';
     crunchAudio.load();
@@ -400,6 +401,13 @@
       sound.volume = 0.8,
       crunchAudio.currentTime = 0;
       crunchAudio.play().catch(() => {});
+    }
+    
+    // Squishy Trigger Haptic
+    function triggerHaptic(duration = 20) {
+      if (typeof navigator !== 'undefined' && navigator.vibrate) {
+        navigator.vibrate(duration);
+      }
     }
 
     // Variabili Fisiche della Molla
@@ -457,6 +465,7 @@
       squishyEl.classList.add('dragging');
 
       playCrunch();
+      triggerHaptic(25);
 
       // Ferma la velocità quando si afferra
       s_velX = 0; 
@@ -489,6 +498,9 @@
     }
 
     function handleDragEnd() {
+      if (isDragging) {
+        triggerHaptic(10);
+      }
       isDragging = false;
       squishyEl.classList.remove('dragging');
       // Al rilascio, il target torna al centro (0,0) attivando il rimbalzo
