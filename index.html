@@ -391,6 +391,17 @@
     // Squishy Physics
     const squishyEl = document.getElementById('squishy');
     
+    const crunchAudio = new Audio('crunch_sound.mp3');
+    crunchAudio.preload = 'auto';
+    crunchAudio.load();
+
+    function playCrunch() {
+      const sound = crunchAudio.cloneNode();
+      sound.volume = 0.8,
+      crunchAudio.currentTime = 0;
+      crunchAudio.play().catch(() => {});
+    }
+
     // Variabili Fisiche della Molla
     let s_currentX = 0, s_currentY = 0; // Posizione attuale
     let s_targetX = 0, s_targetY = 0;   // Posizione target (dito o 0,0)
@@ -444,6 +455,9 @@
     function handleDragStart(e) {
       isDragging = true;
       squishyEl.classList.add('dragging');
+
+      playCrunch();
+
       // Ferma la velocità quando si afferra
       s_velX = 0; 
       s_velY = 0;
